@@ -1,0 +1,36 @@
+# compiled and log files #
+##########################
+target
+
+# Eclipse files #
+#################
+.classpath
+.project
+.settings
+.springBeans
+bin
+*.launch
+
+# NetBeans files #
+##################
+nbactions.xml
+nb-configuration.xml
+
+# IntelliJ IDEA files #
+#######################
+*.iml
+.idea
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Vert.x files #
+################
+.vertx
