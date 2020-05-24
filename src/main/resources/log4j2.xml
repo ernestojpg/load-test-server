@@ -5,7 +5,6 @@
             <PatternLayout pattern="%cyan{%date{ISO8601}%d{Z}} %yellow{[%t]} %highlight{%-5level} %magenta{%logger{0}} - %msg%n"/>
         </Console>
     </Appenders>
-
     <Loggers>
         <Logger name="com.ernestojpg" level="debug" />
         <Root level="info">

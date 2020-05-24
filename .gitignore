@@ -1,6 +1,7 @@
 # compiled and log files #
 ##########################
 target
+dependency-reduced-pom.xml
 
 # Eclipse files #
 #################
