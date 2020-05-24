@@ -2,12 +2,13 @@ package com.ernestojpg.loadtestserver;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Handler;
+import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.handler.BodyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +39,7 @@ public class ServerVerticle extends AbstractVerticle {
         options.setCompressionSupported(true);
         final HttpServer server = vertx.createHttpServer(options);
         final Router router = Router.router(vertx);
+        registerEndpoint(router, HttpMethod.GET, "/health", this::healthHandler);
         registerEndpoint(router, HttpMethod.POST, "/ping", new PingHandler());
         server.requestHandler(router).listen();
 
@@ -51,5 +53,11 @@ public class ServerVerticle extends AbstractVerticle {
         if (instance == context.getInstanceCount()) {
             LOGGER.info("Registered endpoint {}: {}", method, path);
         }
+    }
+
+    private void healthHandler(RoutingContext context) {
+        final HttpServerResponse response = context.response();
+        response.putHeader(HttpHeaders.CONTENT_TYPE, "text/plain");
+        response.end("OK");
     }
 }
