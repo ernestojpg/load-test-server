@@ -37,7 +37,7 @@ public class Main {
     }
 
     private static void printInfo(VertxOptions vertxOptions, DeploymentOptions deploymentOptions) {
-        final DecimalFormat decimalFormat = new DecimalFormat( "#,##0.##" );
+        final DecimalFormat decimalFormat = new DecimalFormat( "#,##0.00" );
         LOGGER.info("Operating System: {} ({})", System.getProperty("os.name"), System.getProperty("os.version"));
         LOGGER.info("Number of Processors: {}", CpuCoreSensor.availableProcessors());
         LOGGER.info("Max memory for application: {} MB", decimalFormat.format(

@@ -129,8 +129,9 @@ passing the following headers in the request:
   with a random length between `<minLength>` and `<maxLength>`, both inclusive.
   `<minLength>` is optional, and it defaults to 0.
 
+
 Example Request, asking for a compressed response with a length between 2000 and 5000 random characters,
-and with a delay of maximum 5000ms.
+and with a delay of maximum 5000ms:
 ```
 curl http://localhost:8080/data -v \
      -H 'random-data-length: 2000,5000' \
