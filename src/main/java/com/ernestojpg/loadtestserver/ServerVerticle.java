@@ -43,6 +43,8 @@ public class ServerVerticle extends AbstractVerticle {
         final Router router = Router.router(vertx);
         registerEndpoint(router, HttpMethod.GET, "/health", this::healthHandler);
         registerEndpoint(router, HttpMethod.POST, "/ping", new PingHandler());
+        registerEndpoint(router, HttpMethod.GET, "/data", new DataHandler());
+        registerEndpoint(router, HttpMethod.POST, "/data", new DataHandler());
         server.requestHandler(router).listen(result -> {
             if (result.failed()) {
                 startPromise.fail(new IllegalStateException(
