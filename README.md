@@ -17,7 +17,7 @@ connections without any problem.
 
 Below we will describe the API provided by the Load Test Server.
 
-### GET /health ###
+### `GET:/health` ###
 
 Basic Health Check endpoint that just returns `200 OK`, with the text "OK".
 
@@ -35,7 +35,7 @@ Example Response:
 OK
 ```
 
-### POST /ping ###
+### `POST:/ping` ###
 
 Basic endpoint with a "ping-pong" functionality. It just returns `200 OK` with the same
 body and `Content-Type` received in the request.
@@ -90,7 +90,7 @@ Example Response:
 {"message": "Hello world!"}
 ```
 
-### GET/POST /data ###
+### `GET:/data` and  `POST:/data` ###
 
 `GET:/data` and `POST:/data` are generic endpoints that return random responses of
 a given size/length. In the `POST` version, the body passed in the request is ignored.
@@ -124,10 +124,32 @@ passing the following headers in the request:
   compressed with [gzip](https://en.wikipedia.org/wiki/Gzip) or [DEFLATE](https://en.wikipedia.org/wiki/DEFLATE)
   respectively.
 * `data-length: <length>`: This header indicates the desired length of the response's body, so the
-  server will reply with `length` random characters.
+  server will reply with `<length>` random characters.
 * `random-data-length: [<minLength>,]<maxLength>`: This header indicates that we want a respose
-  with a random length between <minLength> and <maxLength>, both inclusive.
+  with a random length between `<minLength>` and `<maxLength>`, both inclusive.
   `<minLength>` is optional, and it defaults to 0.
+
+Example Request, asking for a compressed response with a length between 2000 and 5000 random characters,
+and with a delay of maximum 5000ms.
+```
+curl http://localhost:8080/data -v \
+     -H 'random-data-length: 2000,5000' \
+     -H 'random-delay: 5000' \
+     -H 'Accept-Encoding: gzip' \
+     --compressed
+```
+
+Example Response:
+```
+< HTTP/1.1 200 OK
+< content-type: text/plain
+< delay: 3890
+< data-length: 3240
+< content-encoding: gzip
+< transfer-encoding: chunked
+<
+@l?}|:"|](I]AY1T>{G_...
+```
 
 ## Build ##
 
