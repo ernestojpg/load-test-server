@@ -2,6 +2,7 @@ package com.ernestojpg.loadtestserver;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Handler;
+import io.vertx.core.Promise;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
@@ -32,7 +33,8 @@ public class ServerVerticle extends AbstractVerticle {
         instance = INSTANCE_COUNTER.incrementAndGet();
     }
 
-    public void start() {
+    @Override
+    public void start(Promise<Void> startPromise) {
         final int listeningPort = config().getInteger("listeningPort", DEFAULT_LISTENING_PORT);
         final HttpServerOptions options = new HttpServerOptions();
         options.setPort(listeningPort);
@@ -41,17 +43,23 @@ public class ServerVerticle extends AbstractVerticle {
         final Router router = Router.router(vertx);
         registerEndpoint(router, HttpMethod.GET, "/health", this::healthHandler);
         registerEndpoint(router, HttpMethod.POST, "/ping", new PingHandler());
-        server.requestHandler(router).listen();
-
-        if (instance == context.getInstanceCount()) {
-            LOGGER.info("Listening on {}:{} ...", options.getHost(), options.getPort());
-        }
+        server.requestHandler(router).listen(result -> {
+            if (result.failed()) {
+                startPromise.fail(new IllegalStateException(
+                        "Error binding to " + options.getHost() + ":" + options.getPort(), result.cause()));
+            } else {
+                if (instance == context.getInstanceCount()) {
+                    LOGGER.info("Listening on {}:{} ...", options.getHost(), options.getPort());
+                }
+                startPromise.complete();
+            }
+        });
     }
 
     private void registerEndpoint(Router router, HttpMethod method, String path, Handler<RoutingContext> handler) {
         router.route(method, path).handler(handler);
         if (instance == context.getInstanceCount()) {
-            LOGGER.info("Registered endpoint {}: {}", method, path);
+            LOGGER.info("Registered endpoint {}:{}", method, path);
         }
     }
 

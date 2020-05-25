@@ -29,7 +29,11 @@ public class Main {
 
         printInfo(vertxOptions, deploymentOptions);
 
-        vertx.deployVerticle(ServerVerticle.class, deploymentOptions);
+        vertx.deployVerticle(ServerVerticle.class, deploymentOptions, result -> {
+            if (result.failed()) {
+                LOGGER.error("Error starting the application.", result.cause());
+            }
+        });
     }
 
     private static void printInfo(VertxOptions vertxOptions, DeploymentOptions deploymentOptions) {
