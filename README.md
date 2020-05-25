@@ -21,12 +21,12 @@ Below we will describe the API provided by the Load Test Server.
 
 Basic Health Check endpoint that just returns `200 OK`, with the text "OK".
 
-Example Request:
+Example request:
 ```
 curl -v http://localhost:8080/health
 ```
 
-Example Response:
+Example response:
 ```
 < HTTP/1.1 200 OK
 < content-type: text/plain
@@ -40,14 +40,14 @@ OK
 Basic endpoint with a "ping-pong" functionality. It just returns `200 OK` with the same
 body and `Content-Type` received in the request.
 
-Example Request:
+Example request:
 ```
 curl http://localhost:8080/ping -v \
      -H 'Content-Type: text/plain' \
      -d 'Hello world!'
 ```
 
-Example Response:
+Example response:
 ```
 < HTTP/1.1 200 OK
 < transfer-encoding: chunked
@@ -57,8 +57,9 @@ Example Response:
 Hello world!
 ```
 
-We can pass optional headers in the request for changing the default behaviour of
-the application.
+As you can see in the example, by default the server returns the response with no
+delays (`delay: 0`). We can change this default behaviour passing optional headers
+in the request:
 
 * `delay: <delay>`: This header will force the server to delay/sleep for `<delay>` milliseconds
   before returning the response.
@@ -69,7 +70,7 @@ the application.
   compressed with [gzip](https://en.wikipedia.org/wiki/Gzip) or [DEFLATE](https://en.wikipedia.org/wiki/DEFLATE)
   respectively.
 
-Example Request, asking for a compressed response with a random delay between 500ms and 2000ms:
+Example request, asking for a compressed response with a random delay between 500ms and 2000ms:
 ```
 curl http://localhost:8080/ping -v \
      -H 'Content-Type: application/json' \
@@ -79,7 +80,7 @@ curl http://localhost:8080/ping -v \
      --compressed
 ```
 
-Example Response:
+Example response:
 ```
 < HTTP/1.1 200 OK
 < content-type: application/json
@@ -95,12 +96,12 @@ Example Response:
 `GET:/data` and `POST:/data` are generic endpoints that return random responses of
 a given size/length. In the `POST` version, the body passed in the request is ignored.
 
-Example Request:
+Example request:
 ```
 curl http://localhost:8080/data -v
 ```
 
-Example Response:
+Example response:
 ```
 < HTTP/1.1 200 OK
 < content-type: text/plain
@@ -130,7 +131,7 @@ passing the following headers in the request:
   `<minLength>` is optional, and it defaults to 0.
 
 
-Example Request, asking for a compressed response with a length between 2000 and 5000 random characters,
+Example request, asking for a compressed response with a length between 2000 and 5000 random characters,
 and with a delay of maximum 5000ms:
 ```
 curl http://localhost:8080/data -v \
@@ -140,7 +141,7 @@ curl http://localhost:8080/data -v \
      --compressed
 ```
 
-Example Response:
+Example response:
 ```
 < HTTP/1.1 200 OK
 < content-type: text/plain
@@ -164,11 +165,26 @@ This will generate a "fat JAR" file, containing the application and all its depe
 
 This will also build a docker image locally.
 
-### Running the application ###
+## Running the application ##
 
 Once the application is built, we just need to execute the generated fat JAR file:
 
 Example:  
 ```
 java -jar target/load-test-server-1.0-SNAPSHOT-app.jar
+```
+
+We should see something like this:
+```
+2020-05-25T20:14:50,301+0200 [main] INFO  Main - Operating System: Mac OS X (10.15.4)
+2020-05-25T20:14:50,304+0200 [main] INFO  Main - Number of Processors: 12
+2020-05-25T20:14:50,304+0200 [main] INFO  Main - Max memory for application: 3,641.00 MB
+2020-05-25T20:14:50,355+0200 [main] INFO  Main - Max open files: 10240 (soft) , unlimited (hard)
+2020-05-25T20:14:50,356+0200 [main] INFO  Main - Number of event loop threads: 24
+2020-05-25T20:14:50,357+0200 [main] INFO  Main - Deploying 48 ServerVerticle instances
+2020-05-25T20:14:50,618+0200 [vert.x-eventloop-thread-6] INFO  ServerVerticle - Registered endpoint GET:/health
+2020-05-25T20:14:50,619+0200 [vert.x-eventloop-thread-6] INFO  ServerVerticle - Registered endpoint POST:/ping
+2020-05-25T20:14:50,619+0200 [vert.x-eventloop-thread-6] INFO  ServerVerticle - Registered endpoint GET:/data
+2020-05-25T20:14:50,619+0200 [vert.x-eventloop-thread-6] INFO  ServerVerticle - Registered endpoint POST:/data
+2020-05-25T20:14:50,641+0200 [vert.x-eventloop-thread-6] INFO  ServerVerticle - Listening on 0.0.0.0:8080 ...
 ```
