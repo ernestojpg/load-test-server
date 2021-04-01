@@ -69,12 +69,16 @@ in the request:
 * `Accept-Encoding: gzip | deflate`: This header will force the server to return the response
   compressed with [gzip](https://en.wikipedia.org/wiki/Gzip) or [DEFLATE](https://en.wikipedia.org/wiki/DEFLATE)
   respectively.
+* `response-<header_name>: <header_value>`: This header in the request will force a header of type
+  `<header_name>: <header_value>` in the response.
 
-Example request, asking for a compressed response with a random delay between 500ms and 2000ms:
+Example request, asking for a compressed response, with a `Cache-Control: public` header, and a random
+delay between 500ms and 2000ms:
 ```
 curl http://localhost:8080/ping -v \
      -H 'Content-Type: application/json' \
      -H 'random-delay: 500,2000' \
+     -H 'response-cache-control: public' \
      -H 'Accept-Encoding: gzip' \
      -d '{"message": "Hello world!"}' \
      --compressed
@@ -83,8 +87,9 @@ curl http://localhost:8080/ping -v \
 Example response:
 ```
 < HTTP/1.1 200 OK
-< content-type: application/json
 < delay: 703
+< content-type: application/json
+< cache-control: public
 < content-encoding: gzip
 < transfer-encoding: chunked
 <
@@ -129,14 +134,17 @@ passing the following headers in the request:
 * `random-data-length: [<minLength>,]<maxLength>`: This header indicates that we want a respose
   with a random length between `<minLength>` and `<maxLength>`, both inclusive.
   `<minLength>` is optional, and it defaults to 0.
+* `response-<header_name>: <header_value>`: This header in the request will force a header of type
+  `<header_name>: <header_value>` in the response.
 
+Example request, asking for a compressed response, with a `Cache-Control: private` header, with a length
+between 2000 and 5000 random characters, and with a delay of maximum 5000ms:
 
-Example request, asking for a compressed response with a length between 2000 and 5000 random characters,
-and with a delay of maximum 5000ms:
 ```
 curl http://localhost:8080/data -v \
      -H 'random-data-length: 2000,5000' \
      -H 'random-delay: 5000' \
+     -H 'response-cache-control: private' \
      -H 'Accept-Encoding: gzip' \
      --compressed
 ```
@@ -144,9 +152,10 @@ curl http://localhost:8080/data -v \
 Example response:
 ```
 < HTTP/1.1 200 OK
-< content-type: text/plain
 < delay: 3890
+< content-type: text/plain
 < data-length: 3240
+< cache-control: private
 < content-encoding: gzip
 < transfer-encoding: chunked
 <

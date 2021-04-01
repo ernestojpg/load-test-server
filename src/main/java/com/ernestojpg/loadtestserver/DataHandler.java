@@ -31,21 +31,16 @@ public class DataHandler extends AbstractHandler {
         final HttpServerResponse response = context.response();
 
         response.putHeader(HttpHeaders.CONTENT_TYPE, "text/plain");
-        final Integer delay = context.get("delay");
-        if (delay != null) {
-            response.putHeader("delay", delay.toString());
-        }
 
         final int dataLength = getDataLength(request);
         response.putHeader("data-length", String.valueOf(dataLength));
-        if (dataLength == randomBuffer.length()) {
+        if (dataLength <= randomBuffer.length()) {
             response.putHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(dataLength));
-            response.write(randomBuffer);
-        } else if (dataLength < randomBuffer.length()) {
-            response.putHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(dataLength));
-            response.write(randomBuffer.getBuffer(0, randomBuffer.length()));
-        } else if (dataLength > 0) {
+            insertCustomResponseHeaders(context);
+            response.write(randomBuffer.getBuffer(0, dataLength));
+        } else {
             response.setChunked(true);
+            insertCustomResponseHeaders(context);
             int remaining = dataLength;
             while (remaining > 0) {
                 final int toWrite = Math.min(remaining, randomBuffer.length());

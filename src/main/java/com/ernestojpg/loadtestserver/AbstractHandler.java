@@ -6,6 +6,7 @@ import io.vertx.ext.web.RoutingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
@@ -19,12 +20,17 @@ public abstract class AbstractHandler implements Handler<RoutingContext> {
 
     protected final Random random = new Random();
 
+    public static final String DELAY_HEADER = "delay";
+    public static final String RANDOM_DELAY_HEADER = "random-delay";
+    public static final String RESPONSE_HEADER_PREFIX = "response-";
+
     @Override
     public void handle(RoutingContext context) {
         final HttpServerRequest request = context.request();
 
         final int delay = getDelay(request);
-        context.put("delay", delay);
+//        context.put(DELAY_HEADER, delay);
+        context.response().putHeader(DELAY_HEADER, Integer.toString(delay));
         if (delay > 0) {
             request.pause();
             context.vertx().setTimer(delay, tid -> {
@@ -34,6 +40,18 @@ public abstract class AbstractHandler implements Handler<RoutingContext> {
         } else {
             produceResponse(context);
         }
+    }
+
+    /**
+     * delay: <delay>
+     * random-delay: [<minDelay>,]<maxDelay> Delay between <minDelay> and <maxDelay>, both inclusive
+     * @param request HttpServerRequest instance
+     * @return
+     */
+    protected int getDelay(HttpServerRequest request) {
+        return getSimpleNumericHeader(request, DELAY_HEADER)
+                .orElse(getRandomFromMinMaxHeader(request, RANDOM_DELAY_HEADER)
+                        .orElse(0));
     }
 
     protected Optional<Integer> getSimpleNumericHeader(HttpServerRequest request, String headerName) {
@@ -72,16 +90,14 @@ public abstract class AbstractHandler implements Handler<RoutingContext> {
         return Optional.empty();
     }
 
-    /**
-     * delay: <delay>
-     * random-delay: [<minDelay>,]<maxDelay> Delay between <minDelay> and <maxDelay>, both inclusive
-     * @param request
-     * @return
-     */
-    protected int getDelay(HttpServerRequest request) {
-        return getSimpleNumericHeader(request, "delay")
-                .orElse(getRandomFromMinMaxHeader(request, "random-delay")
-                .orElse(0));
+    protected void insertCustomResponseHeaders(RoutingContext context) {
+        for (Map.Entry<String, String> entry : context.request().headers()) {
+            if (entry.getKey().toLowerCase().startsWith(RESPONSE_HEADER_PREFIX)) {
+                context.response().putHeader(
+                        entry.getKey().substring(RESPONSE_HEADER_PREFIX.length()),
+                        entry.getValue());
+            }
+        }
     }
 
     protected Logger logger() {

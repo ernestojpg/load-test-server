@@ -23,10 +23,7 @@ public class PingHandler extends AbstractHandler {
         if (contentType != null) {
             response.putHeader(HttpHeaders.CONTENT_TYPE, contentType);
         }
-        final Integer delay = context.get("delay");
-        if (delay != null) {
-            response.putHeader("delay", delay.toString());
-        }
+        insertCustomResponseHeaders(context);
         request.pipeTo(response);
     }
 }
