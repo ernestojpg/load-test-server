@@ -4,10 +4,13 @@ import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.impl.cpu.CpuCoreSensor;
+import io.vertx.core.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -25,6 +28,7 @@ public class Main {
         final Vertx vertx = Vertx.vertx(vertxOptions);
 
         final DeploymentOptions deploymentOptions = new DeploymentOptions();
+        deploymentOptions.setConfig(getConfig(args));
         deploymentOptions.setInstances(vertxOptions.getEventLoopPoolSize() * 2);
 
         printInfo(vertxOptions, deploymentOptions);
@@ -34,6 +38,36 @@ public class Main {
                 LOGGER.error("Error starting the application.", result.cause());
             }
         });
+    }
+
+    private static JsonObject getConfig(String[] args) {
+        final JsonObject config = new JsonObject();
+        getConfig(Arrays.asList(args), config);
+        return config;
+    }
+
+    private static void getConfig(List<String> args, JsonObject config) {
+        if (!args.isEmpty()) {
+            switch (args.get(0)) {
+                case "-p":
+                    if (args.size() < 2) {
+                        LOGGER.error("Missing port parameter: -p <port>");
+                        System.exit(0);
+                    }
+                    try {
+                        int port = Integer.parseInt(args.get(1));
+                        config.put(ServerVerticle.CONFIG_LISTENING_PORT, port);
+                    } catch (Exception ex) {
+                        LOGGER.error("Invalid port: {}", args.get(1));
+                        System.exit(0);
+                    }
+                    getConfig(args.subList(2, args.size()), config);
+                    break;
+                default:
+                    LOGGER.error("Unrecognised parameter: {}", args.get(0));
+                    System.exit(0);
+            }
+        }
     }
 
     private static void printInfo(VertxOptions vertxOptions, DeploymentOptions deploymentOptions) {

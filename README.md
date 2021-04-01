@@ -197,3 +197,6 @@ We should see something like this:
 2020-05-25T20:14:50,619+0200 [vert.x-eventloop-thread-6] INFO  ServerVerticle - Registered endpoint POST:/data
 2020-05-25T20:14:50,641+0200 [vert.x-eventloop-thread-6] INFO  ServerVerticle - Listening on 0.0.0.0:8080 ...
 ```
+
+Optionally, you can pass the following parameters when starting the application:
+* `-p <port>`: Listening port for the server. Default `8080`.

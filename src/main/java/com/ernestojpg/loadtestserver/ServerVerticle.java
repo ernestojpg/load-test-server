@@ -23,8 +23,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ServerVerticle extends AbstractVerticle {
 
+    public static final String CONFIG_LISTENING_PORT = "listeningPort";
+    public static final int DEFAULT_LISTENING_PORT = 8080;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerVerticle.class);
-    private static final int DEFAULT_LISTENING_PORT = 8080;
     private static final AtomicInteger INSTANCE_COUNTER = new AtomicInteger();
 
     private final int instance;
@@ -35,7 +37,7 @@ public class ServerVerticle extends AbstractVerticle {
 
     @Override
     public void start(Promise<Void> startPromise) {
-        final int listeningPort = config().getInteger("listeningPort", DEFAULT_LISTENING_PORT);
+        final int listeningPort = config().getInteger(CONFIG_LISTENING_PORT, DEFAULT_LISTENING_PORT);
         final HttpServerOptions options = new HttpServerOptions();
         options.setPort(listeningPort);
         options.setCompressionSupported(true);
