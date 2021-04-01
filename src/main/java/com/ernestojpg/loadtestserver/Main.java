@@ -73,6 +73,7 @@ public class Main {
     private static void printInfo(VertxOptions vertxOptions, DeploymentOptions deploymentOptions) {
         final DecimalFormat decimalFormat = new DecimalFormat( "#,##0.00" );
         LOGGER.info("Operating System: {} ({})", System.getProperty("os.name"), System.getProperty("os.version"));
+        LOGGER.info("Process ID (PID): {}", ProcessHandle.current().pid());
         LOGGER.info("Number of Processors: {}", CpuCoreSensor.availableProcessors());
         LOGGER.info("Max memory for application: {} MB", decimalFormat.format(
                 ((float)Runtime.getRuntime().maxMemory()) / 1024 / 1024));
