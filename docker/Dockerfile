@@ -1,4 +1,4 @@
-FROM azul/zulu-openjdk-alpine:8u275-jre
+FROM azul/zulu-openjdk-alpine:11.0.10-jre
 
 LABEL maintainer="Ernesto J. Perez <ernestojpg@gmail.com>"
 

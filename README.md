@@ -164,7 +164,7 @@ Example response:
 
 ## Build ##
 
-Build with Java 8 and Maven 3+.
+Build with Java 11 and Maven 3+.
 
 ```
 mvn clean install
