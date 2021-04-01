@@ -1,4 +1,4 @@
-FROM openjdk:8u252-jre-slim-buster
+FROM azul/zulu-openjdk-alpine:8u275-jre
 
 LABEL maintainer="Ernesto J. Perez <ernestojpg@gmail.com>"
 
