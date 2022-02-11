@@ -104,7 +104,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <vertx.version>3.9.1</vertx.version>
+        <vertx.version>3.9.4</vertx.version>
         <log4j.version>2.11.2</log4j.version>
         <slf4j.version>1.8.0-beta4</slf4j.version>
     </properties>
